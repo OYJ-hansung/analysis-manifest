@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: analysis
+  labels:
+    app: analysis
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: analysis
+  template:
+    metadata:
+      labels:
+        app: analysis
+    spec:
+      containers:
+      - name: analysis-service
+        image: dhdudwn95/analysis:22
+        ports:
+        - containerPort: 8085
+        resources:
+          requests:
+            cpu: 50m
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: analysis
+spec:
+  type: NodePort
+  ports:
+    - nodePort: 38085
+      port: 8085       # 서비스 포트
+      targetPort: 8085   # 타켓, 즉 pod의 포트
+      protocol: TCP
+      name: http
+  selector:
+    app: analysis
